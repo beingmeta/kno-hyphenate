@@ -79,6 +79,9 @@ debian.updated: debian.signed
 
 update-apt: debian.updated
 
+debinstall: debian.signed
+	sudo dpkg -i ../kno-hyphenate_${MOD_VERSION}*.deb
+
 debclean:
 	rm -f ../kno-hyphenate_* ../kno-hyphenate-* debian/changelog
 
