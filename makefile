@@ -4,6 +4,7 @@ KNO_CFLAGS	::= -I. -fPIC $(shell knoconfig cflags)
 KNO_LDFLAGS	::= -fPIC $(shell knoconfig ldflags)
 CFLAGS		::= ${CFLAGS} ${KNO_CFLAGS}
 LDFLAGS		::= ${LDFLAGS} ${KNO_LDFLAGS}
+DATADIR		::= $(DESTDIR)$(shell knoconfig data)
 CMODULES	::= $(DESTDIR)$(shell knoconfig cmodules)
 LIBS		::= $(shell knoconfig libs)
 LIB		::= $(shell knoconfig lib)
@@ -53,6 +54,8 @@ install:
 		to ${MOD_NAME}.so.${MOD_VERSION}
 	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so
 	@echo === Linked ${CMODULES}/${MOD_NAME}.so to ${MOD_NAME}.so.${MOD_VERSION}
+	@${SUDO} ${SYSINSTALL} hyph_en_US.dic ${DATADIR}
+	@echo === Installed ${DATADIR}/hyph_en_US.dic
 
 clean:
 	rm -f *.o ${MOD_NAME}/*.o *.${libsuffix}
