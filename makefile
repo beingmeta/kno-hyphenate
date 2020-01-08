@@ -73,26 +73,26 @@ debian/changelog: debian hyphenate.c makefile
 	  mv debian/changelog.tmp debian/changelog; 				\
 	else rm debian/changelog.tmp; fi
 
-debian.built: hyphenate.c makefile debian debian/changelog
+dist/debian.built: hyphenate.c makefile debian debian/changelog
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
 	touch $@
 
-debian.signed: debian.built
+dist/debian.signed: dist/debian.built
 	debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes && \
 	touch $@
 
-deb debs dpkg dpkgs: debian.signed
+dist/debian.updated: dist/debian.signed
+	dupload -c ./debian/dupload.conf --nomail --to bionic ../kno-hyphenate_*.changes && touch $@
+
+deb debs dpkg dpkgs: dist/debian.signed
 
 debfresh: clean
 	rm -rf debian
-	make debian.signed
+	make dist/debian.signed
 
-debian.updated: debian.signed
-	dupload -c ./debian/dupload.conf --nomail --to bionic ../kno-hyphenate_*.changes && touch $@
+update-apt: dist/debian.updated
 
-update-apt: debian.updated
-
-debinstall: debian.signed
+debinstall: dist/debian.signed
 	sudo dpkg -i ../kno-hyphenate_${MOD_VERSION}*.deb
 
 debclean:
@@ -100,4 +100,4 @@ debclean:
 
 debfresh:
 	make debclean
-	make debian.built
+	make dist/debian.built
