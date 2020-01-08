@@ -63,8 +63,17 @@ fresh:
 	make clean
 	make default
 
-debian/changelog: ${MOD_NAME}.c makefile debian/rules debian/control debian/changelog.base
-	cat debian/changelog.base | etc/gitchangelog kno-hyphenate > $@
+debian: hyphenate.c makefile \
+	dist/debian/rules dist/debian/control \
+	dist/debian/changelog.base
+	rm -rf debian
+	cp -r dist/debian debian
+
+debian/changelog: debian hyphenate.c makefile
+	cat debian/changelog.base | etc/gitchangelog kno-hyphenate > $@.tmp
+	if diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then \
+	  mv debian/changelog.tmp debian/changelog; \
+	else rm debian/changelog.tmp; fi
 
 debian.built: hyphenate.c makefile debian/rules debian/control debian/changelog
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
@@ -73,6 +82,8 @@ debian.built: hyphenate.c makefile debian/rules debian/control debian/changelog
 debian.signed: debian.built
 	debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes && \
 	touch $@
+
+dpkg dpkgs: debian.signed
 
 debian.updated: debian.signed
 	dupload -c ./debian/dupload.conf --nomail --to bionic ../kno-hyphenate_*.changes && touch $@
