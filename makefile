@@ -63,10 +63,17 @@ fresh:
 	make clean
 	make default
 
-debian/changelog: ${MOD_NAME}.c makefile debian/rules debian/control debian/changelog.base
+debian: hyphenate.c makefile \
+	dist/debian/rules dist/debian/control \
+	dist/debian/changelog.base
+	rm -rf debian
+	cp -r dist/debian debian
+	cat debian/changelog.base | etc/gitchangelog kno-hyphenate > debian/changelog
+
+debian/changelog: debian hyphenate.c makefile
 	cat debian/changelog.base | etc/gitchangelog kno-hyphenate > $@
 
-debian.built: hyphenate.c makefile debian/rules debian/control debian/changelog
+debian.built: hyphenate.c makefile debian debian/changelog
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
 	touch $@
 
