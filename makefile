@@ -21,9 +21,8 @@ MOD_NAME	::= hyphenate
 MOD_RELEASE     ::= $(shell cat etc/release)
 MOD_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${MOD_RELEASE}
 
-
-GPGID=FE1BC737F9F323D732AA26330620266BE5AFF294
-SUDO=$(shell which sudo)
+GPGID  = FE1BC737F9F323D732AA26330620266BE5AFF294
+SUDO   = $(shell which sudo)
 
 default build: ${MOD_NAME}.${libsuffix}
 
@@ -96,7 +95,7 @@ debinstall: dist/debian.signed
 	sudo dpkg -i ../kno-hyphenate_${MOD_VERSION}*.deb
 
 debclean:
-	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian
+	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian dist/debian.*
 
 debfresh:
 	make debclean
