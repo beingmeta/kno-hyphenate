@@ -21,8 +21,9 @@ MOD_NAME	::= hyphenate
 MOD_RELEASE     ::= $(shell cat etc/release)
 MOD_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${MOD_RELEASE}
 
-GPGID           ::= FE1BC737F9F323D732AA26330620266BE5AFF294
-SUDO            ::= ${SUDO:-$(shell which sudo)}
+
+GPGID=FE1BC737F9F323D732AA26330620266BE5AFF294
+SUDO=$(shell which sudo)
 
 default: ${MOD_NAME}.${libsuffix}
 
@@ -41,17 +42,12 @@ TAGS: hyphenate.c
 	etags -o TAGS hyphenate.c
 
 install:
-	@${SUDO} ${SYSINSTALL} ${MOD_NAME}.${libsuffix} \
-			${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
+	@${SUDO} ${SYSINSTALL} ${MOD_NAME}.${libsuffix} ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
 	@echo === Installed ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} \
-			${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} \
-		to ${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} \
-			${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR} \
-		to ${MOD_NAME}.so.${MOD_VERSION}
+	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
+	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} to ${MOD_NAME}.so.${MOD_VERSION}
+	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}
+	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR} to ${MOD_NAME}.so.${MOD_VERSION}
 	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so
 	@echo === Linked ${CMODULES}/${MOD_NAME}.so to ${MOD_NAME}.so.${MOD_VERSION}
 	@${SUDO} ${SYSINSTALL} hyph_en_US.dic ${DATADIR}
@@ -71,8 +67,10 @@ debian: hyphenate.c makefile \
 
 debian/changelog: debian hyphenate.c makefile
 	cat debian/changelog.base | etc/gitchangelog kno-hyphenate > $@.tmp
-	if diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then \
-	  mv debian/changelog.tmp debian/changelog; \
+	if test ! -f debian/changelog; then 					\
+	  mv debian/changelog.tmp debian/changelog; 				\
+	elif diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then 	\
+	  mv debian/changelog.tmp debian/changelog; 				\
 	else rm debian/changelog.tmp; fi
 
 debian.built: hyphenate.c makefile debian debian/changelog
@@ -83,7 +81,11 @@ debian.signed: debian.built
 	debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes && \
 	touch $@
 
-dpkg dpkgs: debian.signed
+deb debs dpkg dpkgs: debian.signed
+
+debfresh: clean
+	rm -rf debian
+	make debian.signed
 
 debian.updated: debian.signed
 	dupload -c ./debian/dupload.conf --nomail --to bionic ../kno-hyphenate_*.changes && touch $@
@@ -94,7 +96,7 @@ debinstall: debian.signed
 	sudo dpkg -i ../kno-hyphenate_${MOD_VERSION}*.deb
 
 debclean:
-	rm -f ../kno-hyphenate_* ../kno-hyphenate-* debian/changelog
+	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian
 
 debfresh:
 	make debclean
