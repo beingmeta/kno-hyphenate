@@ -75,7 +75,7 @@ debian/changelog: debian hyphenate.c makefile
 	  mv debian/changelog.tmp debian/changelog; \
 	else rm debian/changelog.tmp; fi
 
-debian.built: hyphenate.c makefile debian/rules debian/control debian/changelog
+debian.built: hyphenate.c makefile debian debian/changelog
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
 	touch $@
 
