@@ -94,7 +94,7 @@ update-apt: dist/debian.updated
 debinstall: dist/debian.signed
 	sudo dpkg -i ../kno-hyphenate_${MOD_VERSION}*.deb
 
-debclean:
+debclean: clean
 	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian dist/debian.*
 
 debfresh:
