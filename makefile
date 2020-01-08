@@ -25,7 +25,7 @@ MOD_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${MOD_RELEASE}
 GPGID=FE1BC737F9F323D732AA26330620266BE5AFF294
 SUDO=$(shell which sudo)
 
-default: ${MOD_NAME}.${libsuffix}
+default build: ${MOD_NAME}.${libsuffix}
 
 hyphenate.so: hyphenate.c makefile
 	@$(MKSO) $(CFLAGS) -o $@ hyphenate.c
@@ -41,7 +41,7 @@ hyphenate.dylib: hyphenate.c
 TAGS: hyphenate.c
 	etags -o TAGS hyphenate.c
 
-install:
+install: build
 	@${SUDO} ${SYSINSTALL} ${MOD_NAME}.${libsuffix} ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
 	@echo === Installed ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
 	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
