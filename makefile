@@ -1,17 +1,18 @@
-prefix		::= $(shell knoconfig prefix)
-libsuffix	::= $(shell knoconfig libsuffix)
-KNO_CFLAGS	::= -I. -fPIC $(shell knoconfig cflags)
-KNO_LDFLAGS	::= -fPIC $(shell knoconfig ldflags)
+KNOCONFIG       ::= knoconfig
+prefix		::= $(shell ${KNOCONFIG} prefix)
+libsuffix	::= $(shell ${KNOCONFIG} libsuffix)
+KNO_CFLAGS	::= -I. -fPIC $(shell ${KNOCONFIG} cflags)
+KNO_LDFLAGS	::= -fPIC $(shell ${KNOCONFIG} ldflags)
 CFLAGS		::= ${CFLAGS} ${KNO_CFLAGS}
 LDFLAGS		::= ${LDFLAGS} ${KNO_LDFLAGS}
-DATADIR		::= $(DESTDIR)$(shell knoconfig data)
-CMODULES	::= $(DESTDIR)$(shell knoconfig cmodules)
-LIBS		::= $(shell knoconfig libs)
-LIB		::= $(shell knoconfig lib)
-INCLUDE		::= $(shell knoconfig include)
-KNO_VERSION	::= $(shell knoconfig version)
-KNO_MAJOR	::= $(shell knoconfig major)
-KNO_MINOR	::= $(shell knoconfig minor)
+DATADIR		::= $(DESTDIR)$(shell ${KNOCONFIG} data)
+CMODULES	::= $(DESTDIR)$(shell ${KNOCONFIG} cmodules)
+LIBS		::= $(shell ${KNOCONFIG} libs)
+LIB		::= $(shell ${KNOCONFIG} lib)
+INCLUDE		::= $(shell ${KNOCONFIG} include)
+KNO_VERSION	::= $(shell ${KNOCONFIG} version)
+KNO_MAJOR	::= $(shell ${KNOCONFIG} major)
+KNO_MINOR	::= $(shell ${KNOCONFIG} minor)
 PKG_RELEASE	::= $(cat ./etc/release)
 DPKG_NAME	::= $(shell ./etc/dpkgname)
 MKSO		::= $(CC) -shared $(LDFLAGS) $(LIBS)
@@ -28,6 +29,7 @@ default build: ${MOD_NAME}.${libsuffix}
 
 hyphenate.so: hyphenate.c makefile
 	@$(MKSO) $(CFLAGS) -o $@ hyphenate.c
+	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MKSO  $@ $<
 	@ln -sf $(@F) $(@D)/$(@F).${KNO_MAJOR}
 hyphenate.dylib: hyphenate.c
@@ -35,6 +37,7 @@ hyphenate.dylib: hyphenate.c
 		`basename $(@F) .dylib`.${KNO_MAJOR}.dylib \
 		${CFLAGS} -o $@ $(DYLIB_FLAGS) \
 		hyphenate.c
+	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MACLIBTOOL  $@ $<
 
 TAGS: hyphenate.c
