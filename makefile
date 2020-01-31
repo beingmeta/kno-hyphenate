@@ -18,15 +18,15 @@ DPKG_NAME	::= $(shell ./etc/dpkgname)
 MKSO		::= $(CC) -shared $(LDFLAGS) $(LIBS)
 MSG		::= echo
 SYSINSTALL      ::= /usr/bin/install -c
-MOD_NAME	::= hyphenate
-MOD_RELEASE     ::= $(shell cat etc/release)
-MOD_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${MOD_RELEASE}
+PKG_NAME	::= hyphenate
+PKG_RELEASE     ::= $(shell cat etc/release)
+PKG_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${PKG_RELEASE}
 APKREPO         ::= $(shell ${KNOCONFIG} apkrepo)
 
 GPGID  = FE1BC737F9F323D732AA26330620266BE5AFF294
 SUDO   = $(shell which sudo)
 
-default build: ${MOD_NAME}.${libsuffix}
+default build: ${PKG_NAME}.${libsuffix}
 
 hyphenate.so: hyphenate.c makefile
 	@$(MKSO) $(CFLAGS) -o $@ hyphenate.c
@@ -48,19 +48,19 @@ ${CMODULES} ${DATADIR}:
 	install -d $@
 
 install: build ${CMODULES} ${DATADIR}
-	@${SUDO} ${SYSINSTALL} ${MOD_NAME}.${libsuffix} ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
-	@echo === Installed ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} to ${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR} to ${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so to ${MOD_NAME}.so.${MOD_VERSION}
+	@${SUDO} ${SYSINSTALL} ${PKG_NAME}.${libsuffix} ${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
+	@echo === Installed ${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} to ${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR} to ${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so to ${PKG_NAME}.so.${PKG_VERSION}
 	@${SUDO} ${SYSINSTALL} hyph_en_US.dic ${DATADIR}
 	@echo === Installed ${DATADIR}/hyph_en_US.dic
 
 clean:
-	rm -f *.o ${MOD_NAME}/*.o *.${libsuffix}
+	rm -f *.o ${PKG_NAME}/*.o *.${libsuffix}
 fresh:
 	make clean
 	make default
@@ -99,7 +99,7 @@ debfresh: clean
 update-apt: dist/debian.updated
 
 debinstall: dist/debian.signed
-	sudo dpkg -i ../kno-hyphenate_${MOD_VERSION}*.deb
+	sudo dpkg -i ../kno-hyphenate_${PKG_VERSION}*.deb
 
 debclean: clean
 	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian dist/debian.*
@@ -119,11 +119,11 @@ staging/alpine:
 staging/alpine/APKBUILD: dist/alpine/APKBUILD staging/alpine
 	cp dist/alpine/APKBUILD staging/alpine
 
-staging/alpine/kno-${MOD_NAME}.tar: staging/alpine
-	git archive --prefix=kno-${MOD_NAME}/ -o staging/alpine/kno-${MOD_NAME}.tar HEAD
+staging/alpine/kno-${PKG_NAME}.tar: staging/alpine
+	git archive --prefix=kno-${PKG_NAME}/ -o staging/alpine/kno-${PKG_NAME}.tar HEAD
 
 dist/alpine.done: staging/alpine/APKBUILD makefile \
-	staging/alpine/kno-${MOD_NAME}.tar ${APKREPO}/dist/x86_64
+	staging/alpine/kno-${PKG_NAME}.tar ${APKREPO}/dist/x86_64
 	cd staging/alpine; \
 		abuild -P ${APKREPO} clean cleancache cleanpkg && \
 		abuild checksum && \
