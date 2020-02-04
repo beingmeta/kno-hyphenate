@@ -22,6 +22,8 @@ PKG_NAME	::= hyphenate
 PKG_RELEASE     ::= $(shell cat etc/release)
 PKG_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${PKG_RELEASE}
 APKREPO         ::= $(shell ${KNOCONFIG} apkrepo)
+CODENAME	::= $(shell ${KNOCONFIG} codename)
+RELSTATUS	::= $(shell ${KNOCONFIG} status)
 
 GPGID  = FE1BC737F9F323D732AA26330620266BE5AFF294
 SUDO   = $(shell which sudo)
@@ -72,11 +74,12 @@ debian: hyphenate.c makefile \
 	cp -r dist/debian debian
 
 debian/changelog: debian hyphenate.c makefile
-	cat debian/changelog.base | etc/gitchangelog kno-hyphenate > $@.tmp
-	if test ! -f debian/changelog; then 					\
-	  mv debian/changelog.tmp debian/changelog; 				\
-	elif diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then 	\
-	  mv debian/changelog.tmp debian/changelog; 				\
+	cat debian/changelog.base | \
+		knomod debchangelog kno-${PKG_NAME} ${CODENAME} ${RELSTATUS} > $@.tmp
+	if test ! -f debian/changelog; then \
+	  mv debian/changelog.tmp debian/changelog; \
+	elif diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then \
+	  mv debian/changelog.tmp debian/changelog; \
 	else rm debian/changelog.tmp; fi
 
 dist/debian.built: hyphenate.c makefile debian debian/changelog
