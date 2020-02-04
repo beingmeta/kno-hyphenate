@@ -95,7 +95,7 @@ dist/debian.updated: dist/debian.signed
 
 deb debs dpkg dpkgs: dist/debian.signed
 
-debfresh: clean
+debfresh: clean debclean
 	rm -rf debian
 	make dist/debian.signed
 
@@ -106,10 +106,6 @@ debinstall: dist/debian.signed
 
 debclean: clean
 	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian dist/debian.*
-
-debfresh:
-	make debclean
-	make dist/debian.built
 
 # Alpine packaging
 
