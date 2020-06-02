@@ -120,7 +120,7 @@ debfresh: clean debclean
 update-apt: dist/debian.updated
 
 debinstall: dist/debian.signed
-	sudo dpkg -i ../kno-hyphenate_${PKG_VERSION}*.deb
+	${SUDO} dpkg -i ../kno-hyphenate_${PKG_VERSION}*.deb
 
 debclean: clean
 	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian dist/debian.*
