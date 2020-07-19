@@ -136,16 +136,22 @@ staging/alpine/APKBUILD: dist/alpine/APKBUILD staging/alpine
 staging/alpine/kno-${PKG_NAME}.tar: staging/alpine
 	git archive --prefix=kno-${PKG_NAME}/ -o staging/alpine/kno-${PKG_NAME}.tar HEAD
 
-dist/alpine.done: staging/alpine/APKBUILD makefile \
+dist/alpine.setup: staging/alpine/APKBUILD makefile ${STATICLIBS} \
 	staging/alpine/kno-${PKG_NAME}.tar
-	if [ ! -d ${APK_ARCH_DIR} ]; then mkdir -p ${APK_ARCH_DIR}; fi;
-	cd staging/alpine; \
+	if [ ! -d ${APK_ARCH_DIR} ]; then mkdir -p ${APK_ARCH_DIR}; fi && \
+	( cd staging/alpine; \
 		abuild -P ${APKREPO} clean cleancache cleanpkg && \
-		abuild checksum && \
-		abuild -P ${APKREPO} && \
-		touch ../../$@
+		abuild checksum ) && \
+	touch $@
+
+dist/alpine.done: dist/alpine.setup
+	( cd staging/alpine; abuild -P ${APKREPO} ) && touch $@
+dist/alpine.installed: dist/alpine.setup
+	( cd staging/alpine; abuild -i -P ${APKREPO} ) && touch dist/alpine.done && touch $@
+
 
 alpine: dist/alpine.done
+install-alpine: dist/alpine.done
 
 .PHONY: alpine
 
