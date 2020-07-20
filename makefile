@@ -15,18 +15,22 @@ INCLUDE		::= $(shell ${KNOCONFIG} include)
 KNO_VERSION	::= $(shell ${KNOCONFIG} version)
 KNO_MAJOR	::= $(shell ${KNOCONFIG} major)
 KNO_MINOR	::= $(shell ${KNOCONFIG} minor)
-PKG_RELEASE	::= $(cat ./etc/release)
-DPKG_NAME	::= $(shell ./etc/dpkgname)
+PKG_VERSION     ::= $(shell cat ./version)
+PKG_MAJOR       ::= $(shell cat ./version | cut -d. -f1)
+FULL_VERSION    ::= ${KNO_MAJOR}.${KNO_MINOR}.${PKG_VERSION}
+PATCHLEVEL      ::= $(shell u8_gitpatchcount ./version)
+PATCH_VERSION   ::= ${FULL_VERSION}-${PATCHLEVEL}
+
+PKG_NAME	::= hyphenate
+DPKG_NAME	::= ${PKG_NAME}_${PATCH_VERSION}
+
 SUDO            ::= $(shell which sudo)
 
 MKSO		  = $(CC) -shared $(LDFLAGS) $(LIBS)
 SYSINSTALL        = /usr/bin/install -c
 MSG		  = echo
 
-PKG_NAME	::= hyphenate
 GPGID             = FE1BC737F9F323D732AA26330620266BE5AFF294
-PKG_VERSION	  = ${KNO_MAJOR}.${KNO_MINOR}.${PKG_RELEASE}
-PKG_RELEASE     ::= $(shell cat etc/release)
 CODENAME	::= $(shell ${KNOCONFIG} codename)
 REL_BRANCH	::= $(shell ${KNOBUILD} getbuildopt REL_BRANCH current)
 REL_STATUS	::= $(shell ${KNOBUILD} getbuildopt REL_STATUS stable)
@@ -57,12 +61,14 @@ ${CMODULES} ${DATADIR}:
 	install -d $@
 
 install: build ${CMODULES} ${DATADIR}
-	@${SUDO} ${SYSINSTALL} ${PKG_NAME}.${libsuffix} ${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
-	@echo === Installed ${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
-	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
-	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} to ${PKG_NAME}.so.${PKG_VERSION}
-	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}
-	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR} to ${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ${SYSINSTALL} ${PKG_NAME}.${libsuffix} ${CMODULES}/${PKG_NAME}.so.${FULL_VERSION}
+	@echo === Installed ${CMODULES}/${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}.${PKG_MAJOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}.${PKG_MAJOR} to ${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} to ${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR} to ${PKG_NAME}.so.${FULL_VERSION}
 	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so
 	@echo === Linked ${CMODULES}/${PKG_NAME}.so to ${PKG_NAME}.so.${PKG_VERSION}
 	@${SUDO} ${SYSINSTALL} hyph_en_US.dic ${DATADIR}
@@ -91,8 +97,8 @@ debian: hyphenate.c makefile \
 
 debian/changelog: debian hyphenate.c makefile
 	cat debian/changelog.base | \
-		knobuild debchangelog kno-${PKG_NAME} ${CODENAME} \
-			${REL_BRANCH} ${REL_STATUS} ${REL_PRIORITY} \
+		u8_debchangelog kno-${PKG_NAME} ${CODENAME} \
+			${REL_BRANCH} ${PATCH_VERSION} ${REL_STATUS} ${REL_PRIORITY} \
 	    > $@.tmp
 	if test ! -f debian/changelog; then \
 	  mv debian/changelog.tmp debian/changelog; \
