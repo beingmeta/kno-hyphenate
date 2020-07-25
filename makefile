@@ -43,7 +43,6 @@ default build: ${PKG_NAME}.${libsuffix}
 
 hyphenate.so: hyphenate.c makefile
 	@$(MKSO) $(CFLAGS) -o $@ hyphenate.c -lhyphen
-	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MKSO  $@ $<
 	@ln -sf $(@F) $(@D)/$(@F).${KNO_MAJOR}
 hyphenate.dylib: hyphenate.c
@@ -51,7 +50,6 @@ hyphenate.dylib: hyphenate.c
 		`basename $(@F) .dylib`.${KNO_MAJOR}.dylib \
 		${CFLAGS} -o $@ $(DYLIB_FLAGS) \
 		hyphenate.c
-	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MACLIBTOOL  $@ $<
 
 TAGS: hyphenate.c
