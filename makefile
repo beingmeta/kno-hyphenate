@@ -5,6 +5,7 @@ prefix		::= $(shell ${KNOCONFIG} prefix)
 libsuffix	::= $(shell ${KNOCONFIG} libsuffix)
 KNO_CFLAGS	::= -I. -fPIC $(shell ${KNOCONFIG} cflags)
 KNO_LDFLAGS	::= -fPIC $(shell ${KNOCONFIG} ldflags)
+KNO_LIBS	::= $(shell ${KNOCONFIG} libs)
 CFLAGS		::= ${CFLAGS} ${KNO_CFLAGS}
 LDFLAGS		::= ${LDFLAGS} ${KNO_LDFLAGS}
 DATADIR		::= $(DESTDIR)$(shell ${KNOCONFIG} data)
