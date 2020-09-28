@@ -62,7 +62,7 @@ ${CMODULES} ${DATADIR}:
 	install -d $@
 
 install: build ${CMODULES} ${DATADIR}
-	${SUDO} u8_install_shared ziptools.${libsuffix} ${CMODULES} ${FULL_VERSION} "${SYSINSTALL}"
+	${SUDO} u8_install_shared ${PKG_NAME}.${libsuffix} ${CMODULES} ${FULL_VERSION} "${SYSINSTALL}"
 	@${SUDO} ${SYSINSTALL} hyph_en_US.dic ${DATADIR}
 	@echo === Installed ${DATADIR}/hyph_en_US.dic
 
