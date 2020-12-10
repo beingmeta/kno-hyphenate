@@ -103,19 +103,20 @@ dist/debian.built: hyphenate.c makefile debian debian/changelog
 	touch $@
 
 dist/debian.signed: dist/debian.built
-	debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes && \
-	touch $@
-
-dist/debian.updated: dist/debian.signed
-	dupload -c ./dist/dupload.conf --nomail --to bionic ../kno-hyphenate_*.changes && touch $@
+	@if test "${GPGID}" = "none" || test -z "${GPGID}"; then  	\
+	  echo "Skipping debian signing";				\
+	  touch $@;							\
+	else 								\
+	  echo debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes;	\
+	  debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes && 	\
+	  touch $@;							\
+	fi;
 
 deb debs dpkg dpkgs: dist/debian.signed
 
 debfresh: clean debclean
 	rm -rf debian
 	make dist/debian.signed
-
-update-apt: dist/debian.updated
 
 debinstall: dist/debian.signed
 	${SUDO} dpkg -i ../kno-hyphenate_*.deb
