@@ -3,7 +3,7 @@ KNOBUILD          = knobuild
 
 prefix		::= $(shell ${KNOCONFIG} prefix)
 libsuffix	::= $(shell ${KNOCONFIG} libsuffix)
-KNO_CFLAGS	::= -I. -fPIC $(shell ${KNOCONFIG} cflags)
+KNO_CFLAGS	::= -I. -fPIC -Wno-multichar $(shell ${KNOCONFIG} cflags)
 KNO_LDFLAGS	::= -fPIC $(shell ${KNOCONFIG} ldflags)
 KNO_LIBS	::= $(shell ${KNOCONFIG} libs)
 CFLAGS		::= ${CFLAGS} ${KNO_CFLAGS}
@@ -41,6 +41,10 @@ REL_PRIORITY	::= $(shell ${KNOBUILD} getbuildopt REL_PRIORITY medium)
 ARCH            ::= $(shell ${KNOBUILD} getbuildopt BUILD_ARCH || uname -m)
 APKREPO         ::= $(shell ${KNOBUILD} getbuildopt APKREPO /srv/repo/kno/apk)
 APK_ARCH_DIR      = ${APKREPO}/staging/${ARCH}
+
+%.o: %.c
+	@$(CC) $(CFLAGS) -D_FILEINFO="\"$(shell u8_fileinfo ./$< $(dirname $(pwd))/)\"" -o $@ -c $<
+	@$(MSG) CC $@ $<
 
 default build: ${PKG_NAME}.${libsuffix}
 
