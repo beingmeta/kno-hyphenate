@@ -37,7 +37,7 @@ static long long int hyphenate_init = 0;
 KNO_DEFCPRIM("hyphenate-word",hyphenate_word_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
 	     "returns a copy of *word* with hyphens inserted",
-	     "word",kno_string_type,KNO_VOID)
+	     {"word",kno_string_type,KNO_VOID})
 static lispval hyphenate_word_prim(lispval word)
 {
   u8_string string = KNO_CSTRING(word);
@@ -66,7 +66,7 @@ static lispval hyphenate_word_prim(lispval word)
 KNO_DEFCPRIM("hyphen-breaks",hyphen_breaks_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
 	     "returns the locations in *string* where hyphens may be placed",
-	     "string",kno_string_type,KNO_VOID)
+	     {"string",kno_string_type,KNO_VOID})
 static lispval hyphen_breaks_prim(lispval string)
 {
   u8_string s = KNO_CSTRING(string);
@@ -113,7 +113,7 @@ KNO_DEFCPRIM("shyphenate",shyphenate_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
 	     "`(SHYPHENATE *arg0*)` "
 	     "**undocumented**",
-	     "string",kno_string_type,KNO_VOID)
+	     {"string",kno_string_type,KNO_VOID})
 static lispval shyphenate_prim(lispval string)
 {
   u8_string s = KNO_CSTRING(string);
@@ -175,7 +175,7 @@ KNO_DEFCPRIM("hyphenout",hyphenout_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
 	     "`(HYPHENOUT *arg0* [*arg1*])` "
 	     "**undocumented**",
-	     "string",kno_string_type,KNO_VOID,
+	     {"string",kno_string_type,KNO_VOID},
 	     "hyphen_char",kno_character_type,KNO_CHAR2CODE('­'))
 static lispval hyphenout_prim(lispval string,lispval hyphen_char)
 {
@@ -234,8 +234,8 @@ KNO_DEFCPRIM("hyphenate",hyphenate_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
 	     "`(HYPHENATE *arg0* [*arg1*])` "
 	     "**undocumented**",
-	     "string",kno_string_type,KNO_VOID,
-	     "hyphen_char",kno_character_type,(KNO_CHAR2CODE('­')))
+	     {"string",kno_string_type,KNO_VOID},
+	     {"hyphen_char",kno_character_type,(KNO_CHAR2CODE('­'))})
 static lispval hyphenate_prim(lispval string,lispval hyphen_char)
 {
   lispval result;
@@ -334,10 +334,6 @@ static void link_local_cprims()
   KNO_LINK_CPRIM("hyphen-breaks",hyphen_breaks_prim,1,hyphenate_module);
   KNO_LINK_CPRIM("hyphenate-word",hyphenate_word_prim,1,hyphenate_module);
 
-  KNO_LINK_TYPED("hyphenate",hyphenate_prim,2,hyphenate_module,
-		 kno_string_type,KNO_VOID,
-		 kno_character_type,KNO_CODE2CHAR(c));
-  KNO_LINK_TYPED("hyphenout",hyphenout_prim,2,hyphenate_module,
-		 kno_string_type,KNO_VOID,
-		 kno_character_type,KNO_CODE2CHAR(c));
+  KNO_LINK_CPRIM("hyphenate",hyphenate_prim,2,hyphenate_module);
+  KNO_LINK_CPRIM("hyphenout",hyphenout_prim,2,hyphenate_module);
 }
