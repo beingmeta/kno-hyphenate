@@ -111,7 +111,6 @@ static lispval hyphen_breaks_prim(lispval string)
 
 KNO_DEFCPRIM("shyphenate",shyphenate_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	     "`(SHYPHENATE *arg0*)` "
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID})
 static lispval shyphenate_prim(lispval string)
@@ -173,7 +172,6 @@ static int hyphenout_helper(U8_OUTPUT *out,
 
 KNO_DEFCPRIM("hyphenout",hyphenout_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	     "`(HYPHENOUT *arg0* [*arg1*])` "
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID},
 	     "hyphen_char",kno_character_type,KNO_CHAR2CODE('­'))
@@ -232,7 +230,6 @@ static lispval hyphenout_prim(lispval string,lispval hyphen_char)
 
 KNO_DEFCPRIM("hyphenate",hyphenate_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	     "`(HYPHENATE *arg0* [*arg1*])` "
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID},
 	     {"hyphen_char",kno_character_type,(KNO_CHAR2CODE('­'))})
