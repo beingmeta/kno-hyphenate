@@ -174,13 +174,13 @@ KNO_DEFCPRIM("hyphenout",hyphenout_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID},
-	     "hyphen_char",kno_character_type,KNO_CHAR2CODE('­'))
+	     "hyphen_char",kno_character_type,(KNO_CHAR2CODE(0xAD))) /* '­' */
 static lispval hyphenout_prim(lispval string,lispval hyphen_char)
 {
   U8_OUTPUT *output = u8_current_output;
   u8_string s = KNO_CSTRING(string);
   int len = KNO_STRLEN(string);
-  int hc = (KNO_CHARACTERP(hyphen_char)) ? (KNO_CHAR2CODE(hyphen_char)) : ('­');
+  int hc = (KNO_CHARACTERP(hyphen_char)) ? (KNO_CHAR2CODE(hyphen_char)) : (0xAD); /* '­' */
   const u8_byte *scan = s;
   struct U8_OUTPUT word;
   int c = u8_sgetc(&scan);
@@ -232,14 +232,14 @@ KNO_DEFCPRIM("hyphenate",hyphenate_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID},
-	     {"hyphen_char",kno_character_type,(KNO_CHAR2CODE('­'))})
+	     {"hyphen_char",kno_character_type,(KNO_CHAR2CODE(0xAD))})  /* '­' */
 static lispval hyphenate_prim(lispval string,lispval hyphen_char)
 {
   lispval result;
   struct U8_OUTPUT out; U8_OUTPUT *output = &out;
   u8_string s = KNO_CSTRING(string);
   int len = KNO_STRLEN(string);
-  int hc = (KNO_CHARACTERP(hyphen_char)) ? (KNO_CHAR2CODE(hyphen_char)) : ('­');
+  int hc = (KNO_CHARACTERP(hyphen_char)) ? (KNO_CHAR2CODE(hyphen_char)) : (0xAD);  /* '­' */
   const u8_byte *scan = s;
   struct U8_OUTPUT word;
   int c = u8_sgetc(&scan);
