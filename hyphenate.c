@@ -34,7 +34,7 @@ static HyphenDict *default_dict = NULL;
 static long long int hyphenate_init = 0;
 
 
-KNO_DEFCPRIM("hyphenate-word",hyphenate_word_prim,
+DEFC_PRIM("hyphenate-word",hyphenate_word_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
 	     "returns a copy of *word* with hyphens inserted",
 	     {"word",kno_string_type,KNO_VOID})
@@ -63,7 +63,7 @@ static lispval hyphenate_word_prim(lispval word)
 }
 
 
-KNO_DEFCPRIM("hyphen-breaks",hyphen_breaks_prim,
+DEFC_PRIM("hyphen-breaks",hyphen_breaks_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
 	     "returns the locations in *string* where hyphens may be placed",
 	     {"string",kno_string_type,KNO_VOID})
@@ -109,7 +109,7 @@ static lispval hyphen_breaks_prim(lispval string)
       return result;}}
 }
 
-KNO_DEFCPRIM("shyphenate",shyphenate_prim,
+DEFC_PRIM("shyphenate",shyphenate_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID})
@@ -170,7 +170,7 @@ static int hyphenout_helper(U8_OUTPUT *out,
 }
 
 
-KNO_DEFCPRIM("hyphenout",hyphenout_prim,
+DEFC_PRIM("hyphenout",hyphenout_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID},
@@ -228,7 +228,7 @@ static lispval hyphenout_prim(lispval string,lispval hyphen_char)
 }
 
 
-KNO_DEFCPRIM("hyphenate",hyphenate_prim,
+DEFC_PRIM("hyphenate",hyphenate_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
 	     "**undocumented**",
 	     {"string",kno_string_type,KNO_VOID},

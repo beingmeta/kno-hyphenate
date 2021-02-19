@@ -81,18 +81,19 @@ gitup gitup-trunk:
 
 # Debian packaging
 
-DEBFILES=changelog.base compat control copyright dirs docs install
+DEBFILES=changelog.base control.base compat copyright dirs docs install
 
-debian: hyphenate.c makefile \
-	dist/debian/rules dist/debian/control \
-	dist/debian/changelog.base
+debian: dist/debian/compat dist/debian/control.base dist/debian/changelog.base
 	rm -rf debian
 	cp -r dist/debian debian
 	cd debian; chmod a-x ${DEBFILES}
 
+debian/compat: dist/debian/compat
+	rm -rf debian
+	cp -r dist/debian debian
 
-debian/changelog: debian hyphenate.c makefile
-	cat debian/changelog.base | \
+debian/changelog: debian/compat dist/debian/changelog.base
+	cat dist/debian/changelog.base | \
 		u8_debchangelog kno-${PKG_NAME} ${CODENAME} ${PATCH_VERSION} \
 			${REL_BRANCH} ${REL_STATUS} ${REL_PRIORITY} \
 	    > $@.tmp
@@ -101,8 +102,10 @@ debian/changelog: debian hyphenate.c makefile
 	elif diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then \
 	  mv debian/changelog.tmp debian/changelog; \
 	else rm debian/changelog.tmp; fi
+debian/control: debian/compat dist/debian/control.base
+	u8_xsubst debian/control dist/debian/control.base "KNO_MAJOR" "${KNO_MAJOR}"
 
-dist/debian.built: hyphenate.c makefile debian debian/changelog
+dist/debian.built: makefile debian/changelog debian/control
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
 	touch $@
 
@@ -111,8 +114,8 @@ dist/debian.signed: dist/debian.built
 	  echo "Skipping debian signing";				\
 	  touch $@;							\
 	else 								\
-	  echo debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes;	\
-	  debsign --re-sign -k${GPGID} ../kno-hyphenate_*.changes && 	\
+	  echo debsign --re-sign -k${GPGID} ../kno-${PKG_NAME}_*.changes;	\
+	  debsign --re-sign -k${GPGID} ../kno-${PKG_NAME}_*.changes && 	\
 	  touch $@;							\
 	fi;
 
@@ -123,10 +126,10 @@ debfresh: clean debclean
 	make dist/debian.signed
 
 debinstall: dist/debian.signed
-	${SUDO} dpkg -i ../kno-hyphenate_*.deb
+	${SUDO} dpkg -i ../kno-${PKG_NAME}_*.deb
 
 debclean: clean
-	rm -rf ../kno-hyphenate_* ../kno-hyphenate-* debian dist/debian.*
+	rm -rf ../kno-${PKG_NAME}-* debian dist/debian.*
 
 # Alpine packaging
 
