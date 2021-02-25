@@ -1,6 +1,7 @@
 /* -*- Mode: C; Character-encoding: utf-8; -*- */
 
 /* Copyright (C) 2012-2019 beingmeta, inc.
+   Copyright (C) 2020-2021 beingmeta, LLC
    This file is part of beingmeta's Kno platform and is copyright
    and a valuable trade secret of beingmeta, inc.
 */
@@ -35,9 +36,9 @@ static long long int hyphenate_init = 0;
 
 
 DEFC_PRIM("hyphenate-word",hyphenate_word_prim,
-	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	     "returns a copy of *word* with hyphens inserted",
-	     {"word",kno_string_type,KNO_VOID})
+	  KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
+	  "returns a copy of *word* with hyphens inserted",
+	  {"word",kno_string_type,KNO_VOID})
 static lispval hyphenate_word_prim(lispval word)
 {
   u8_string string = KNO_CSTRING(word);
@@ -64,9 +65,9 @@ static lispval hyphenate_word_prim(lispval word)
 
 
 DEFC_PRIM("hyphen-breaks",hyphen_breaks_prim,
-	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	     "returns the locations in *string* where hyphens may be placed",
-	     {"string",kno_string_type,KNO_VOID})
+	  KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
+	  "returns the locations in *string* where hyphens may be placed",
+	  {"string",kno_string_type,KNO_VOID})
 static lispval hyphen_breaks_prim(lispval string)
 {
   u8_string s = KNO_CSTRING(string);
@@ -110,9 +111,9 @@ static lispval hyphen_breaks_prim(lispval string)
 }
 
 DEFC_PRIM("shyphenate",shyphenate_prim,
-	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	     "**undocumented**",
-	     {"string",kno_string_type,KNO_VOID})
+	  KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
+	  "**undocumented**",
+	  {"string",kno_string_type,KNO_VOID})
 static lispval shyphenate_prim(lispval string)
 {
   u8_string s = KNO_CSTRING(string);
@@ -171,10 +172,10 @@ static int hyphenout_helper(U8_OUTPUT *out,
 
 
 DEFC_PRIM("hyphenout",hyphenout_prim,
-	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	     "**undocumented**",
-	     {"string",kno_string_type,KNO_VOID},
-	     "hyphen_char",kno_character_type,(KNO_CHAR2CODE(0xAD))) /* '­' */
+	  KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
+	  "**undocumented**",
+	  {"string",kno_string_type,KNO_VOID},
+	  "hyphen_char",kno_character_type,(KNO_CHAR2CODE(0xAD))) /* '­' */
 static lispval hyphenout_prim(lispval string,lispval hyphen_char)
 {
   U8_OUTPUT *output = u8_current_output;
@@ -229,10 +230,10 @@ static lispval hyphenout_prim(lispval string,lispval hyphen_char)
 
 
 DEFC_PRIM("hyphenate",hyphenate_prim,
-	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	     "**undocumented**",
-	     {"string",kno_string_type,KNO_VOID},
-	     {"hyphen_char",kno_character_type,(KNO_CHAR2CODE(0xAD))})  /* '­' */
+	  KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
+	  "**undocumented**",
+	  {"string",kno_string_type,KNO_VOID},
+	  {"hyphen_char",kno_character_type,(KNO_CHAR2CODE(0xAD))})  /* '­' */
 static lispval hyphenate_prim(lispval string,lispval hyphen_char)
 {
   lispval result;
