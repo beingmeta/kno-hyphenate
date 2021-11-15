@@ -16,10 +16,10 @@ INCLUDE		::= $(shell ${KNOCONFIG} include)
 KNO_VERSION	::= $(shell ${KNOCONFIG} version)
 KNO_MAJOR	::= $(shell ${KNOCONFIG} major)
 KNO_MINOR	::= $(shell ${KNOCONFIG} minor)
-PKG_VERSION     ::= $(shell cat ./version)
-PKG_MAJOR       ::= $(shell cat ./version | cut -d. -f1)
+PKG_VERSION     ::= $(shell u8_gitversion ./etc/knomod_version)
+PKG_MAJOR       ::= $(shell cat ./etc/knomod_version | cut -d. -f1)
 FULL_VERSION    ::= ${KNO_MAJOR}.${KNO_MINOR}.${PKG_VERSION}
-PATCHLEVEL      ::= $(shell u8_gitpatchcount ./version)
+PATCHLEVEL      ::= $(shell u8_gitpatchcount ./etc/knomod_version)
 PATCH_VERSION   ::= ${FULL_VERSION}-${PATCHLEVEL}
 
 PKG_NAME	::= hyphenate
